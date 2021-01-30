@@ -16,9 +16,7 @@ function serve() {
 	  await Utils.updateOhmStatusById(req.params.id,req.params.newStatus, req.params.refuseDetail);
       res.send();
 	  //res.send(ohm);
-	  
-	   //console.log(req.params.id); 
-	   //console.log(req.params.newStatus); 
+
     })
 
     app.listen(3000, () => console.log('listening on port 3000'));
