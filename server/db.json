@@ -3,7 +3,7 @@
     {
       "id": "0",
       "trackingId": "1e62adfe",
-      "status": "IN_DELIVERY",
+      "status": "DELIVERED",
       "comment": null,
       "description": {
         "volts": 12,
@@ -30,7 +30,8 @@
           "state": "IN_DELIVERY",
           "at": "123456789"
         }
-      ]
+      ],
+      "refuseDetail": "salim"
     },
     {
       "id": "1",

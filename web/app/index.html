@@ -21,9 +21,33 @@
                 <p>
                     <button id="formBtn" type="submit">Submit</button>
                 </p>
+				<p>
+                    <span >{{ohmInfo}}</span>
+                </p>
                 <p>
                     <span ng-if="errorMessage">{{errorMessage}}</span>
                 </p>
+				
+				
+            </form>
+			<br/>
+			<br/>
+			<form ng-controller="deliveryStatusCont" ng-submit="sendData()">
+                <div>
+					<p>Please select the status of the delivery :</p>
+					<input type="radio" id="delivered" name="deliveryStatus" value="Delivered" ng-model="deliveryStatus">
+					<label for="Delivered">Delivered</label><br/>
+					<input type="radio" id="refused" name="deliveryStatus" value="Refused" ng-model="deliveryStatus">
+					<label for="Refused">Refused</label><br/>
+					<p visibility={{refusedClicked}}>
+						<input id="refuseDetail" type="text" ng-model="refuseDetail" placeholder="Enter your refuse description"/>
+					</p>
+				</div>
+				
+                <p>
+                    <button id="formBtnDelivery" type="submit">Submit Delivery Status</button>
+                </p>
+
             </form>
         </div>
     </body>

@@ -18,4 +18,24 @@ async function getOhmById(id) {
     return ohm;
 }
 
-module.exports = { getOhmById }
+async function updateOhmStatusById(id, newStatus, refuseDetail) {
+    const _db = await db;
+
+
+	//let ohm = _db.get('ohms')
+    //    .find({ id })
+	//ohm.status = newStatus;
+	//ohm.refuseDetail = refuseDetail;
+	//_db.write();
+	
+	
+	
+	_db.get('ohms')
+  .find({ id: id })
+  .assign({ status: newStatus}, { refuseDetail: refuseDetail} )
+  .write()
+
+    
+}
+
+module.exports = { getOhmById, updateOhmStatusById }
