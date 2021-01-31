@@ -12,43 +12,129 @@
             <h1>Ohm Delivery</h1>
             <h2>Get shocked by the power</h2>
         </div>
-        
-        <div ng-app="ohm-delivery">
+        <div ng-app="ohm-delivery" ng-model="deliveryReady" ng-init="deliveryReady = false; deliveryStatusSubmittedMessage = false;">
             <form ng-controller="tracking" ng-submit="sendData()">
                 <p>
-                    <input id="tracking" type="text" ng-model="trackingId" placeholder="Enter your tracking id"/>
+                    <input id="tracking" required="required"  type="text" ng-model="trackingId" placeholder="Enter your tracking id"/>
                 </p>
                 <p>
-                    <button id="formBtn" type="submit">Submit</button>
+                    <button id="formBtn" type="submit">Find Delivery</button>
+					<button id="formBtnReset" type="reset" ng-click="reset()" >Reset</button>
+					<button  ng-if="deliveryReady" id="formBtnReorder"  ng-click="reOrder()"  type="button">Reorder</button>
+					<br/>
+					<p ng-if="reOrderTrackingId" style="color:#008000";> 
+						Your re order is submited successfully. New order's tracking id is: {{reOrderTrackingId}}
+					</p>
+                </p>
+				<br/>
+				<p ng-if="deliveryReady">
+					<table ng-if="deliveryReady" class="center">
+						<tr>
+							<th>Delivery Details</th>
+							<th>Customer Details</th>
+							<th>Delivery History</th>
+						</tr>
+					    <tr>
+						 <td style="padding-right:50px">
+						    <table>
+								<tr>
+									<td style="font-weight: bold;">Tracking Id </td>
+									<td>{{ohmInfo.trackingId}}</td>
+								</tr>
+								<tr>
+									<td style="font-weight: bold;">Status</td>
+									<td>{{ohmInfo.status}}</td>
+								</tr>
+								<tr>
+									<td style="font-weight: bold;">Volts</td>
+									<td>{{ohmInfo.description.volts}}</td>
+								</tr>
+							    <tr>
+									<td style="font-weight: bold;">Amperes</td>
+									<td>{{ohmInfo.description.amperes}}</td>
+								</tr>
+								<tr>
+									<td style="font-weight: bold;">Comment</td>
+									<td>{{ohmInfo.comment}}</td>
+								</tr>
+							</table>	
+						  </td>
+						   <td style="padding-right:50px">
+							<table ng-if="deliveryReady">
+								 <tr>
+									<td style="font-weight: bold;">Name<td>
+									<td>{{ohmInfo.client.name}}<td>
+								</tr>
+								<tr>
+									<td style="font-weight: bold;">Address<td>
+									<td>{{ohmInfo.client.address}}<td>
+								</tr>
+							</table>
+						  </td>
+						  <td style="padding-right:50px">
+							<table ng-if="deliveryReady">
+								<tr ng-if="deliveryReady" ng-repeat="x in ohmInfo.history">
+									<td>{{x.state}}</td>
+									<td>{{x.at}}</td>
+								</tr>
+							</table>
+						  </td>
+						</tr>						
+					</table>
                 </p>
 				<p>
-                    <span >{{ohmInfo}}</span>
-                </p>
-                <p>
-                    <span ng-if="errorMessage">{{errorMessage}}</span>
-                </p>
-				
-				
-            </form>
-			<br/>
-			<br/>
-			<form ng-controller="deliveryStatusCont" ng-submit="sendData()">
-                <div>
-					<p>Please select the status of the delivery :</p>
-					<input type="radio" id="delivered" name="deliveryStatus" value="Delivered" ng-model="deliveryStatus">
-					<label for="Delivered">Delivered</label><br/>
-					<input type="radio" id="refused" name="deliveryStatus" value="Refused" ng-model="deliveryStatus">
-					<label for="Refused">Refused</label><br/>
-					<p visibility={{refusedClicked}}>
-						<input id="refuseDetail" type="text" ng-model="refuseDetail" placeholder="Enter your refuse description"/>
+					<input ng-if="deliveryReady" id="commentId"   type="text" placeholder="Enter your comments about delivery"/>
+					<br/>
+					<button ng-if="deliveryReady" id="formBtnAddComment" type="button" ng-click="addComment()">Add Comment</button>
+					<p ng-if="commentAdded" style="color:#008000";> 
+						Your comment added successfully.
 					</p>
-				</div>
-				
-                <p>
-                    <button id="formBtnDelivery" type="submit">Submit Delivery Status</button>
+				</p>
+				<p>
+                    <span ng-if="errorMessage" style="color:#FF0000";>{{errorMessage}}</span>
                 </p>
 
             </form>
+			<br/>
+			<br/>
+			<!-- Only found deliveries which are in IN_DELIVERY status can be submited as refused or delivered-->
+			<div ng-if="deliveryReady && ohmInfo.status == 'IN_DELIVERY'">
+				<form ng-controller="deliveryStatusCont" ng-submit="sendData()">
+					<div>
+							<table class="center">
+								<tr>
+									<td>	
+										<b style="text-align: center;">Please select the status of the delivery </b>
+									</td>	
+								</tr>
+								<tr>
+									<td>	
+											<input style="text-align: center; width: 10%;margin: 2%;" type="radio" required="required" id="delivered" name="deliveryStatus" value="DELIVERED" ng-model="deliveryStatus" ng-click="refuseDetail='-'">
+											<label for="Delivered">Delivered</label>
+									</td>	
+								</tr>
+								<tr>
+									<td>	
+											<input style="text-align: center;width: 10%;margin: 2%;" type="radio" id="refused" name="deliveryStatus" value="REFUSED" ng-model="deliveryStatus" ng-click="refuseDetail=''">
+											<label for="Refused">Refused</label>
+									</td>	
+								</tr>
+							</table>
+						<p ng-show="deliveryStatus == 'REFUSED'" class="ng-show">
+							<input id="refuseDetail" type="text" ng-model="refuseDetail" placeholder="Enter your refuse description"/>
+						</p>
+					</div>
+					<p>
+						<button id="formBtnDelivery" type="submit">Submit Delivery Status</button>
+					</p>
+				    <p ng-if="deliveryStatusSubmittedMessage">
+						<b style="color:#008000";>Your Delivery Status Updated Succesfully </b>
+					</p>
+					<p>
+						<span ng-if="!deliveryStatusSubmittedMessage" style="color:#FF0000";>{{deliveryStatusSubmittedErrorMessage}}</span>
+					</p>
+				</form>
+			<div>
         </div>
     </body>
 </html>
